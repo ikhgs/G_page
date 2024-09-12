@@ -8,7 +8,7 @@ const commandFiles = fs.readdirSync(path.join(__dirname, '../commands')).filter(
 
 for (const file of commandFiles) {
   const command = require(`../commands/${file}`);
-  commands.set(command.name, command);
+  commands.set(command.config.name, command);
 }
 
 module.exports = async function handleAction(event, pageAccessToken) {
@@ -51,7 +51,18 @@ module.exports = async function handleAction(event, pageAccessToken) {
   if (commands.has(commandName)) {
     const command = commands.get(commandName);
     try {
-      await command.execute(senderId, args, pageAccessToken, sendMessage);
+      // Remplacer 'execute' par 'onStart'
+      if (command.onStart) {
+        await command.onStart({
+          api: {
+            sendMessage: (text, threadID) => sendMessage(senderId, { text }, pageAccessToken)
+          },
+          event: { threadID: senderId },
+          args
+        });
+      } else {
+        await sendMessage(senderId, { text: 'Command not supported.' }, pageAccessToken);
+      }
     } catch (error) {
       console.error(`Error executing command ${commandName}:`, error);
       await sendMessage(senderId, { text: 'There was an error executing your command.' }, pageAccessToken);
