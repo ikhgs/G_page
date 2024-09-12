@@ -21,14 +21,11 @@ module.exports = {
   // La fonction onchat répond automatiquement à chaque message de l'utilisateur
   onchat: async function ({ api, event }) {
     try {
-      // Récupérer le message de l'utilisateur et encoder pour l'API
       const prompt = encodeURIComponent(event.message.body);
       const apiUrl = `https://gem2-9b-it-njiv.vercel.app/api?ask=${prompt}`;
       
-      // Envoyer la requête à l'API
       const response = await axios.get(apiUrl);
       
-      // Envoyer la réponse au thread de l'utilisateur
       if (response.data && response.data.response) {
         api.sendMessage(response.data.response, event.threadID);
       } else {
