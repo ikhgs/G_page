@@ -11,24 +11,24 @@ for (const file of commandFiles) {
   commands.set(command.name, command);
 }
 
-module.exports = function handleAction(event, pageAccessToken) {
+module.exports = async function handleAction(event, pageAccessToken) {
   const senderId = event.sender.id;
   const message = event.message;
 
   // Définir des actions personnalisées
-  function onChat() {
+  async function onChat() {
     const reply = `You said: "${message.text}"`;
-    sendMessage(senderId, { text: reply }, pageAccessToken);
+    await sendMessage(senderId, { text: reply }, pageAccessToken);
   }
 
-  function onStart() {
+  async function onStart() {
     const welcomeMessage = "Welcome to the bot! How can I assist you today?";
-    sendMessage(senderId, { text: welcomeMessage }, pageAccessToken);
+    await sendMessage(senderId, { text: welcomeMessage }, pageAccessToken);
   }
 
-  function onReply() {
+  async function onReply() {
     const replyMessage = "Thanks for your reply!";
-    sendMessage(senderId, { text: replyMessage }, pageAccessToken);
+    await sendMessage(senderId, { text: replyMessage }, pageAccessToken);
   }
 
   // Vérifier si un message est présent
@@ -51,34 +51,34 @@ module.exports = function handleAction(event, pageAccessToken) {
   if (commands.has(commandName)) {
     const command = commands.get(commandName);
     try {
-      command.execute(senderId, args, pageAccessToken, sendMessage);
+      await command.execute(senderId, args, pageAccessToken, sendMessage);
     } catch (error) {
       console.error(`Error executing command ${commandName}:`, error);
-      sendMessage(senderId, { text: 'There was an error executing your command.' }, pageAccessToken);
+      await sendMessage(senderId, { text: 'There was an error executing your command.' }, pageAccessToken);
     }
   } else {
     // Si l'utilisateur envoie le mot "start", démarrer la conversation
     if (message.text && message.text.toLowerCase() === 'start') {
-      onStart();
+      await onStart();
     }
     // Si l'utilisateur envoie le mot "reply", simuler une réponse
     else if (message.text && message.text.toLowerCase() === 'reply') {
-      onReply();
+      await onReply();
     }
     // Sinon, traiter comme une conversation classique
     else {
-      onChat();
+      await onChat();
     }
   }
 
   // Gérer les pièces jointes
   if (message.attachments) {
-    message.attachments.forEach(attachment => {
+    for (const attachment of message.attachments) {
       if (attachment.type === 'image') {
         const reply = 'You sent an image!';
-        sendMessage(senderId, { text: reply }, pageAccessToken);
+        await sendMessage(senderId, { text: reply }, pageAccessToken);
       }
       // Gérer d'autres types de pièces jointes ici (vidéo, fichier, etc.)
-    });
+    }
   }
 };
