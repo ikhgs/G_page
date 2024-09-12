@@ -7,6 +7,11 @@ const { sendMessage } = require('./handles/sendMessage');
 // Utilisation de handleAction.js
 const handleAction = require('./handles/handleAction');
 
+// Initialisation de global.utils
+global.utils = {
+  getPrefix: () => "!"  // Exemple de fonction qui renvoie un préfixe
+};
+
 const app = express();
 app.use(bodyParser.json());
 
