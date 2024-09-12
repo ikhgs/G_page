@@ -3,19 +3,24 @@ const axios = require('axios');
 module.exports = {
   config: {
     name: "gem29",
-    author: "cliff",
+    author: "cliff", // api by hazey
     version: "1.0.0",
     countDown: 5,
     role: 0,
     category: "AI",
     shortDescription: {
-      en: "{p}gem29"
+      en: "{p}mixtral"
     }
   },
+
   onStart: async function ({ api, event, args }) {
+    // Optionnel : Laisser vide si aucune logique n'est nécessaire ici
+  },
+
+  onChat: async function ({ api, event, args }) {
     try {
       if (!args[0]) {
-        return api.sendMessage("Please provide a prompt for Gem29.", event.threadID);
+        return api.sendMessage("Please provide a prompt for Llama.", event.threadID);
       }
 
       const prompt = encodeURIComponent(args.join(" "));
@@ -26,10 +31,10 @@ module.exports = {
       if (response.data && response.data.response) {
         api.sendMessage(response.data.response, event.threadID);
       } else {
-        api.sendMessage("Unable to get a response from Gem29.", event.threadID);
+        api.sendMessage("Unable to get a response from Llama3.", event.threadID);
       }
     } catch (error) {
-      console.error('Error making Gem29 API request:', error.message);
+      console.error('Error making Llama API request:', error.message);
       api.sendMessage("An error occurred while processing your request.", event.threadID);
     }
   }
