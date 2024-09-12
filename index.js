@@ -1,16 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const path = require('path');
 const { handlePostback } = require('./handles/handlePostback');
 const { sendMessage } = require('./handles/sendMessage');
-
-// Utilisation de handleAction.js
-const handleAction = require('./handles/handleAction');
-
-// Initialisation de global.utils
-global.utils = {
-  getPrefix: () => "!"  // Exemple de fonction qui renvoie un préfixe
-};
+const { handleAction } = require('./handles/handleAction');  // Assurez-vous que ceci est correct
 
 const app = express();
 app.use(bodyParser.json());
